@@ -2,28 +2,51 @@
 using BeamCalculator.Models.BeamInfo;
 using BeamCalculator.Models.Loader;
 using Caliburn.Micro;
+using Newtonsoft.Json.Linq;
+using Prism.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Animation;
 
 namespace BeamCalculator.ViewModels
 {
     public class ElementViewModel : Screen
     {
-        private List<Element> _listOfElements;
+
         private BeamData _beamData;
         private CalcTest _calcTest;
 
-        private string _selectedCategory;
-        private Element _selectedElement;
+        private BindableCollection<LoadPoint> _listLoadPoint;
+        public BindableCollection<LoadPoint> ListLoadPoint
+        {
+            get
+            {
+                return _listLoadPoint;
+            }
+            set
+            {
+                _listLoadPoint = value;
+                NotifyOfPropertyChange(() => ListLoadPoint);
+            }
+        }
+
+
 
         public ElementViewModel()
         {
+
             //_listOfElements = FileLoader.getElementsList();
             _beamData = new BeamData();
-            _calcTest = new CalcTest(); 
+            _calcTest = new CalcTest();
+            ListLoadPoint = new BindableCollection<LoadPoint>()
+            {
+                {new LoadPoint(0,0) }
+
+            };
 
             _listOfElements = new List<Element>()
             {
@@ -34,6 +57,8 @@ namespace BeamCalculator.ViewModels
             };
         }
 
+        //Category
+        private List<Element> _listOfElements;
         public List<string> CategoryNames
         {
             get
@@ -42,6 +67,7 @@ namespace BeamCalculator.ViewModels
             }
         }
 
+        private string _selectedCategory;
         public string SelectedCategory
         {
             get { return _selectedCategory; }
@@ -66,6 +92,7 @@ namespace BeamCalculator.ViewModels
             }
         }
 
+        private Element _selectedElement;
         public Element SelectedElement
         {
             get { return _selectedElement; }
@@ -76,51 +103,100 @@ namespace BeamCalculator.ViewModels
             }
         }
 
+        //Dimensions
+        private string _cantileverLeft;
         public string CantileverLeft
         {
             get
             {
-                return _beamData.CantileverLeft.ToString();
+                return _cantileverLeft;
             }
             set
             {
-                _beamData.CantileverLeft = int.Parse(value);
+                _cantileverLeft = value;
                 NotifyOfPropertyChange(() => CantileverLeft);
             }
         }
 
+        private string _cantileverRight;
         public string CantileverRight
         {
             get
             {
-                return _beamData.CantileverRight.ToString();
+                return _cantileverRight;
             }
             set
             {
-                _beamData.CantileverRight = int.Parse(value);
+                _cantileverRight = value;
                 NotifyOfPropertyChange(() => CantileverRight);
             }
         }
 
+        private string _spanOne;
         public string SpanOne
         {
             get
             {
-                return _beamData.SpanOne.ToString();
+                return _spanOne;
             }
             set
             {
-                _beamData.SpanOne = int.Parse(value);
+                _spanOne = value;
                 NotifyOfPropertyChange(() => SpanOne);
             }
         }
 
+
+        //load list - point load
+
+
+
+        private DelegateCommand<LoadPoint> _deleteCommand;
+        public DelegateCommand<LoadPoint> DeleteCommand =>
+            _deleteCommand ?? (_deleteCommand = new DelegateCommand<LoadPoint>(ExecuteDeleteCommand));
+        void ExecuteDeleteCommand(LoadPoint parameter)
+        {
+            ListLoadPoint.Remove(parameter);
+
+        }
+
+
+        public string Nazwa;
+
+        //generate charts
+        public void GenerateCharts()
+        {
+            //_beamData.SpanOne = int.Parse(_spanOne);
+            //_beamData.CantileverRight = int.Parse(_cantileverRight);
+            //_beamData.CantileverLeft = int.Parse(_cantileverLeft);
+
+            //Nazwa = _calcTest.GiveTestName2(_beamData);
+
+
+        }
+
+        public string ValueTest2
+        {
+            get
+            {
+                _beamData.SpanOne = int.Parse(_spanOne);
+                _beamData.CantileverRight = int.Parse(_cantileverRight);
+                _beamData.CantileverLeft = int.Parse(_cantileverLeft);
+
+                return _calcTest.GiveTestName2(_beamData);
+            }
+        }
+
+
+        //test
         public string ValueTest
         {
             get 
             {
                 //return _calcTest.Calc(_beamData); 
-                return _calcTest.Calc(CantileverLeft, CantileverRight);
+                //return _calcTest.Calc(CantileverLeft, CantileverRight);
+                //return _calcTest.GiveName(_selectedElement);
+                return _calcTest.GiveTestName();
             }
         }
 

@@ -24,6 +24,21 @@ namespace BeamCalculator.Models
 
         }
 
+        public string GiveName(Element element)
+        {
+            return element.Name;
+        }
+
+        public string GiveTestName()
+        {
+            return "Ania";
+        }
+
+        public string GiveTestName2(BeamData data)
+        {
+            return data.SpanOne.ToString();
+
+        }
 
     }
 }
