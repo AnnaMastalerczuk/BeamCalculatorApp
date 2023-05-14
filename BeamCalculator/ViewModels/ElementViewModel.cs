@@ -1,4 +1,5 @@
-﻿using BeamCalculator.Models;
+﻿using BeamCalculator.Commands;
+using BeamCalculator.Models;
 using BeamCalculator.Models.BeamInfo;
 using BeamCalculator.Models.Loader;
 using Caliburn.Micro;
@@ -10,6 +11,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using System.Windows.Media.Animation;
 
 namespace BeamCalculator.ViewModels
@@ -17,7 +19,6 @@ namespace BeamCalculator.ViewModels
     public class ElementViewModel : Screen
     {
 
-        private BeamData _beamData;
         private CalcTest _calcTest;
 
         private BindableCollection<LoadPoint> _listLoadPoint;
@@ -36,28 +37,7 @@ namespace BeamCalculator.ViewModels
 
 
 
-        public ElementViewModel()
-        {
-
-            //_listOfElements = FileLoader.getElementsList();
-            _beamData = new BeamData();
-            _calcTest = new CalcTest();
-            ListLoadPoint = new BindableCollection<LoadPoint>()
-            {
-                {new LoadPoint(0,0) }
-
-            };
-
-            _listOfElements = new List<Element>()
-            {
-                {new Element("belka", "belka drewniana", 5,10) },
-                {new Element("belka lezaca", "belka drewniana", 1,7) },
-                {new Element("rygiel ws", "rygiel stalowy", 25,100) },
-                {new Element("rygiel mk", "rygiel stalowy", 35,150) }
-            };
-        }
-
-        //Category
+         //Category
         private List<Element> _listOfElements;
         public List<string> CategoryNames
         {
@@ -161,11 +141,38 @@ namespace BeamCalculator.ViewModels
         }
 
 
+        public ICommand GenerateChartsCommand { get; }
+
+
+        public ElementViewModel()
+        {
+            GenerateChartsCommand = new GenerateChartsCommand(this);
+
+            //_listOfElements = FileLoader.getElementsList();
+
+            _calcTest = new CalcTest();
+            ListLoadPoint = new BindableCollection<LoadPoint>()
+            {
+                {new LoadPoint(0,0) }
+
+            };
+
+            _listOfElements = new List<Element>()
+            {
+                {new Element("belka", "belka drewniana", 5,10) },
+                {new Element("belka lezaca", "belka drewniana", 1,7) },
+                {new Element("rygiel ws", "rygiel stalowy", 25,100) },
+                {new Element("rygiel mk", "rygiel stalowy", 35,150) }
+            };
+        }
+
+
+
         public string Nazwa;
 
         //generate charts
-        public void GenerateCharts()
-        {
+        //public void GenerateCharts()
+        //{
             //_beamData.SpanOne = int.Parse(_spanOne);
             //_beamData.CantileverRight = int.Parse(_cantileverRight);
             //_beamData.CantileverLeft = int.Parse(_cantileverLeft);
@@ -173,19 +180,19 @@ namespace BeamCalculator.ViewModels
             //Nazwa = _calcTest.GiveTestName2(_beamData);
 
 
-        }
+        //}
 
-        public string ValueTest2
-        {
-            get
-            {
-                _beamData.SpanOne = int.Parse(_spanOne);
-                _beamData.CantileverRight = int.Parse(_cantileverRight);
-                _beamData.CantileverLeft = int.Parse(_cantileverLeft);
+        //public string ValueTest2
+        //{
+        //    get
+        //    {
+        //        _beamData.SpanOne = int.Parse(_spanOne);
+        //        _beamData.CantileverRight = int.Parse(_cantileverRight);
+        //        _beamData.CantileverLeft = int.Parse(_cantileverLeft);
 
-                return _calcTest.GiveTestName2(_beamData);
-            }
-        }
+        //        return _calcTest.GiveTestName2(_beamData);
+        //    }
+        //}
 
 
         //test

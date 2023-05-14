@@ -12,6 +12,13 @@ namespace BeamCalculator.Models.BeamInfo
         public int CantileverRight { get; set; }
         public int SpanOne { get; set; }
 
+        public BeamData(int cantileferL, int cantileverR, int span)
+        {
+            this.CantileverLeft = cantileferL;
+            this.CantileverRight = cantileverR;
+            this.SpanOne = span;            
+        }
+
 
 
     }
