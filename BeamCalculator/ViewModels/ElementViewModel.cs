@@ -35,9 +35,23 @@ namespace BeamCalculator.ViewModels
             }
         }
 
+        private BindableCollection<LoadDistributed> _listLoadDistributed;
+        public BindableCollection<LoadDistributed> ListLoadDistributed
+        {
+            get
+            {
+                return _listLoadDistributed;
+            }
+            set
+            {
+                _listLoadDistributed = value;
+                NotifyOfPropertyChange(() => ListLoadDistributed);
+            }
+        }
 
 
-         //Category
+
+        //Category
         private List<Element> _listOfElements;
         public List<string> CategoryNames
         {
@@ -131,10 +145,10 @@ namespace BeamCalculator.ViewModels
 
 
 
-        private DelegateCommand<LoadPoint> _deleteCommand;
-        public DelegateCommand<LoadPoint> DeleteCommand =>
-            _deleteCommand ?? (_deleteCommand = new DelegateCommand<LoadPoint>(ExecuteDeleteCommand));
-        void ExecuteDeleteCommand(LoadPoint parameter)
+        private DelegateCommand<LoadPoint> _deleteLoadPointCommand;
+        public DelegateCommand<LoadPoint> DeleteLoadPointCommand =>
+            _deleteLoadPointCommand ?? (_deleteLoadPointCommand = new DelegateCommand<LoadPoint>(ExecuteDeleteLoadPointCommand));
+        void ExecuteDeleteLoadPointCommand(LoadPoint parameter)
         {
             ListLoadPoint.Remove(parameter);
 
@@ -154,6 +168,12 @@ namespace BeamCalculator.ViewModels
             ListLoadPoint = new BindableCollection<LoadPoint>()
             {
                 {new LoadPoint(0,0) }
+
+            };
+
+            ListLoadDistributed = new BindableCollection<LoadDistributed>()
+            {
+                
 
             };
 

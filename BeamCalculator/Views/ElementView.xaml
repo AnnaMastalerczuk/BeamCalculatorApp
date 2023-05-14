@@ -70,6 +70,25 @@
                 <DataGridTemplateColumn>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
+                            <Button Command="{Binding DataContext.DeleteLoadPointCommand,ElementName=_window}" CommandParameter="{Binding}">Usuń</Button>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!--Beam distributed load-->
+        <TextBlock Grid.Row="1" Grid.Column="4" Margin="10" Text="Obciążenia równomiernie rozłożone:"/>
+        <DataGrid Grid.Row="2" Grid.Column="4" Grid.RowSpan="5" Margin="10"
+                  CanUserAddRows="True" AutoGenerateColumns="False"
+                  ItemsSource="{Binding Path=ListLoadDistributed, Mode=TwoWay}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Pozycja początkowa [mm]" Binding="{Binding Path=StartPosition, Mode=TwoWay}"/>
+                <DataGridTextColumn Header="Pozycja końcowa [mm]" Binding="{Binding Path=EndPosition, Mode=TwoWay}"/>
+                <DataGridTextColumn Header="Obciążenie równomiernie rozłożone [kN/m]" Binding="{Binding Path=LoadValue, Mode=TwoWay}"/>
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
                             <Button Command="{Binding DataContext.DeleteCommand,ElementName=_window}" CommandParameter="{Binding}">Usuń</Button>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

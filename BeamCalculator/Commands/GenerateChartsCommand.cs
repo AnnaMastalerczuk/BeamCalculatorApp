@@ -22,6 +22,7 @@ namespace BeamCalculator.Commands
             _calculatorManager = new CalculatorManager();
             _elementViewModel = elementViewModel;
 
+
             _elementViewModel.PropertyChanged += OnViewModelPropertyChanged;
             
         }
@@ -44,7 +45,9 @@ namespace BeamCalculator.Commands
         }
         public override void Execute(object? parameter)
         {
-            //List<LoadPoint> loadPoint = _elementViewModel.ListLoadPoint;
+
+            List<LoadPoint> loadPoint = _elementViewModel.ListLoadPoint.ToList();
+            List<LoadDistributed> loadDistributed= _elementViewModel.ListLoadDistributed.ToList();
             Element element = _elementViewModel.SelectedElement;
             BeamData beamData = new BeamData(int.Parse(_elementViewModel.CantileverLeft), int.Parse(_elementViewModel.CantileverRight), int.Parse(_elementViewModel.SpanOne));
 
