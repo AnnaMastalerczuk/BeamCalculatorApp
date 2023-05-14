@@ -9,14 +9,23 @@ namespace BeamCalculator.Models.Calculator
 {
     public class CalculatorManager
     {
-        //public void Calculate(Element element, BeamData beamData, LoadDistributed loadDistributed, LoadPoint loadPoint)
-        //{
 
-        //}
+        private CalculateReactionsOneSpan _calculateReactionsOneSpan;
 
-        public void Calculate(Element element, BeamData beamData)
+        public CalculatorManager()
         {
+            _calculateReactionsOneSpan = new CalculateReactionsOneSpan();
+    
+        }
 
+
+        public void Calculate(Element element, BeamData beamData, List<LoadPoint> loadPoint, List<LoadDistributed> loadDistributed)
+        {
+            List<double> reactions = new List<double>();
+            reactions = _calculateReactionsOneSpan.CalculateReactions(beamData, loadPoint, loadDistributed);
+           
+
+            
         }
     }
 }

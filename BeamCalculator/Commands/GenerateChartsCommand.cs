@@ -53,7 +53,7 @@ namespace BeamCalculator.Commands
 
             try
             {
-                _calculatorManager.Calculate(element, beamData);
+                _calculatorManager.Calculate(element, beamData, loadPoint, loadDistributed);
 
             }
             catch (Exception ex)
