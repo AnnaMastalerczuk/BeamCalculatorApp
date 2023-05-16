@@ -16,7 +16,7 @@ using System.Windows.Media.Animation;
 
 namespace BeamCalculator.ViewModels
 {
-    public class ElementViewModel : Screen
+    public class ElementViewModel : Conductor<IScreen>  
     {
 
         private CalcTest _calcTest;
@@ -48,7 +48,6 @@ namespace BeamCalculator.ViewModels
                 NotifyOfPropertyChange(() => ListLoadDistributed);
             }
         }
-
 
 
         //Category
@@ -143,8 +142,6 @@ namespace BeamCalculator.ViewModels
 
         //load list - point load
 
-
-
         private DelegateCommand<LoadPoint> _deleteLoadPointCommand;
         public DelegateCommand<LoadPoint> DeleteLoadPointCommand =>
             _deleteLoadPointCommand ?? (_deleteLoadPointCommand = new DelegateCommand<LoadPoint>(ExecuteDeleteLoadPointCommand));
@@ -154,6 +151,14 @@ namespace BeamCalculator.ViewModels
 
         }
 
+        private DelegateCommand<LoadDistributed> _deleteLoadDistributedCommand;
+        public DelegateCommand<LoadDistributed> DeleteLoadDistributedCommand =>
+           _deleteLoadDistributedCommand ?? (_deleteLoadDistributedCommand = new DelegateCommand<LoadDistributed>(ExecuteDeleteLoadDistributedCommand));
+        void ExecuteDeleteLoadDistributedCommand(LoadDistributed parameter)
+        {
+            ListLoadDistributed.Remove(parameter);
+
+        }
 
         public ICommand GenerateChartsCommand { get; }
 
@@ -186,6 +191,11 @@ namespace BeamCalculator.ViewModels
             };
         }
 
+        public void GenerateChartsButton()
+        {
+            ActivateItemAsync(new ResultViewModel());
+
+        }
 
 
         public string Nazwa;

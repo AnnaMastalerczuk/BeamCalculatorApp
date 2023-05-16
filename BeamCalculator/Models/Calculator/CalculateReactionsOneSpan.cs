@@ -5,14 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Media.Animation;
 
 namespace BeamCalculator.Models.Calculator
 {
     public class CalculateReactionsOneSpan
     {
-        public List<double> CalculateReactions(BeamData beamData, List<LoadPoint> loadPoint, List<LoadDistributed> loadDistributed)
+        public Dictionary<string, double> CalculateReactions(BeamData beamData, List<LoadPoint> loadPoint, List<LoadDistributed> loadDistributed)
         {
-            List<double> reactions = new List<double>();
+            Dictionary<string, double> reactions = new Dictionary<string, double>();
 
             double loadDistributedSumMoment = 0;
             double loadDistributedSum = 0;
@@ -34,8 +35,8 @@ namespace BeamCalculator.Models.Calculator
             double V2 = calculateV2(loadDistributedSumMoment, loadPointSumMoment, beamData);
             double V1 = calculateV1(V2, loadDistributedSum, loadPointSum);
 
-            reactions.Add(V1);
-            reactions.Add(V2);
+            reactions.Add("V1",V1);
+            reactions.Add("V2", V2);
 
             return reactions;
 
