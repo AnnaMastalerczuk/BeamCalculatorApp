@@ -197,46 +197,5 @@ namespace BeamCalculator.ViewModels
 
         }
 
-
-        public string Nazwa;
-
-        //generate charts
-        //public void GenerateCharts()
-        //{
-            //_beamData.SpanOne = int.Parse(_spanOne);
-            //_beamData.CantileverRight = int.Parse(_cantileverRight);
-            //_beamData.CantileverLeft = int.Parse(_cantileverLeft);
-
-            //Nazwa = _calcTest.GiveTestName2(_beamData);
-
-
-        //}
-
-        //public string ValueTest2
-        //{
-        //    get
-        //    {
-        //        _beamData.SpanOne = int.Parse(_spanOne);
-        //        _beamData.CantileverRight = int.Parse(_cantileverRight);
-        //        _beamData.CantileverLeft = int.Parse(_cantileverLeft);
-
-        //        return _calcTest.GiveTestName2(_beamData);
-        //    }
-        //}
-
-
-        //test
-        public string ValueTest
-        {
-            get 
-            {
-                //return _calcTest.Calc(_beamData); 
-                //return _calcTest.Calc(CantileverLeft, CantileverRight);
-                //return _calcTest.GiveName(_selectedElement);
-                return _calcTest.GiveTestName();
-            }
-        }
-
-
     }
 }
