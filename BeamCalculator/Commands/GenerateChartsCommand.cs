@@ -56,7 +56,7 @@ namespace BeamCalculator.Commands
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Błąd");
+                MessageBox.Show("Błąd. Podaj dane ponownie");
             }            
         }
     }

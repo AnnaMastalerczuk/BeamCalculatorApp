@@ -6,20 +6,29 @@ using Caliburn.Micro;
 using Newtonsoft.Json.Linq;
 using Prism.Commands;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.DirectoryServices.ActiveDirectory;
+using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 
 namespace BeamCalculator.ViewModels
 {
-    public class ElementViewModel : Conductor<IScreen>  
+    public class ElementViewModel : Conductor<IScreen>, INotifyDataErrorInfo, INotifyPropertyChanged
     {
 
         private CalcTest _calcTest;
+
+        //load lists
 
         private BindableCollection<LoadPoint> _listLoadPoint;
         public BindableCollection<LoadPoint> ListLoadPoint
@@ -32,8 +41,35 @@ namespace BeamCalculator.ViewModels
             {
                 _listLoadPoint = value;
                 NotifyOfPropertyChange(() => ListLoadPoint);
-            }
+
+                if (ListLoadPoint[0].StartPosition > 10)
+                {
+                    AddError("Niepoprawny format. Podaj wymiary w mm", nameof(ListLoadPoint));
+                }
+
+            }   
         }
+
+  
+
+        //private string _startPosition;
+
+        //public string StartPosition
+        //{
+        //    get { return _startPosition; }
+        //    set { 
+        //        _startPosition = value;
+        //        NotifyOfPropertyChange(() => StartPosition);
+
+        //        ClearErrors(nameof(StartPosition));
+        //        if (StartPosition.Contains('.') || StartPosition.Contains(',') || StartPosition.Any(Char.IsLetter))
+        //        {
+        //            AddError("Niepoprawny format. Podaj wymiary w mm", nameof(StartPosition));
+        //        }
+        //    }
+        //}
+
+
 
         private BindableCollection<LoadDistributed> _listLoadDistributed;
         public BindableCollection<LoadDistributed> ListLoadDistributed
@@ -45,7 +81,8 @@ namespace BeamCalculator.ViewModels
             set
             {
                 _listLoadDistributed = value;
-                NotifyOfPropertyChange(() => ListLoadDistributed);
+                NotifyOfPropertyChange(() => ListLoadDistributed);                
+               
             }
         }
 
@@ -108,6 +145,13 @@ namespace BeamCalculator.ViewModels
             {
                 _cantileverLeft = value;
                 NotifyOfPropertyChange(() => CantileverLeft);
+                NotifyOfPropertyChange(() => BeamLength);
+                               
+                ClearErrors(nameof(CantileverLeft));
+                if(CantileverLeft.Contains('.') || CantileverLeft.Contains(',') || CantileverLeft.Any(Char.IsLetter))
+                {
+                    AddError("Niepoprawny format. Podaj wymiary w mm", nameof(CantileverLeft));                   
+                } 
             }
         }
 
@@ -122,6 +166,13 @@ namespace BeamCalculator.ViewModels
             {
                 _cantileverRight = value;
                 NotifyOfPropertyChange(() => CantileverRight);
+                NotifyOfPropertyChange(() => BeamLength);
+
+                ClearErrors(nameof(CantileverRight));
+                if (CantileverRight.Contains('.') || CantileverRight.Contains(',') || CantileverRight.Any(Char.IsLetter))
+                {
+                    AddError("Niepoprawny format. Podaj wymiary w mm", nameof(CantileverRight));
+                }
             }
         }
 
@@ -136,11 +187,37 @@ namespace BeamCalculator.ViewModels
             {
                 _spanOne = value;
                 NotifyOfPropertyChange(() => SpanOne);
+                NotifyOfPropertyChange(() => BeamLength);
+
+                ClearErrors(nameof(SpanOne));
+                if (SpanOne.Contains('.') || SpanOne.Contains(',') || SpanOne.Any(Char.IsLetter))
+                {
+                    AddError("Niepoprawny format. Podaj wymiary w mm", nameof(SpanOne));
+                }
+
             }
         }
 
+        //private int _beamLength;
 
-        //load list - point load
+        //public int BeamLength
+        //{
+        //    get { return int.Parse(CantileverRight) + int.Parse(CantileverRight) + int.Parse(SpanOne); }
+
+        //}
+
+        private int _beamLength;
+
+        public int BeamLength
+        {
+            get { return _beamLength; }
+            set { _beamLength = value; }
+        }
+
+
+
+
+        //load list command
 
         private DelegateCommand<LoadPoint> _deleteLoadPointCommand;
         public DelegateCommand<LoadPoint> DeleteLoadPointCommand =>
@@ -162,6 +239,15 @@ namespace BeamCalculator.ViewModels
 
         public ICommand GenerateChartsCommand { get; }
 
+
+
+        public void GenerateChartsButton()
+        {
+            ActivateItemAsync(new ResultViewModel());
+
+        }
+
+        private readonly Dictionary<string, List<string>> _propertyNameToErrorsDictionary;
 
         public ElementViewModel()
         {
@@ -189,54 +275,43 @@ namespace BeamCalculator.ViewModels
                 {new Element("rygiel ws", "rygiel stalowy", 25,100) },
                 {new Element("rygiel mk", "rygiel stalowy", 35,150) }
             };
+
+            _propertyNameToErrorsDictionary = new Dictionary<string, List<string>>();
         }
 
-        public void GenerateChartsButton()
-        {
-            ActivateItemAsync(new ResultViewModel());
+        public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
 
+        bool INotifyDataErrorInfo.HasErrors => _propertyNameToErrorsDictionary.Any();
+
+        IEnumerable INotifyDataErrorInfo.GetErrors(string? propertyName)
+        {
+            return _propertyNameToErrorsDictionary.GetValueOrDefault(propertyName, new List<string>());
         }
 
-
-        public string Nazwa;
-
-        //generate charts
-        //public void GenerateCharts()
-        //{
-            //_beamData.SpanOne = int.Parse(_spanOne);
-            //_beamData.CantileverRight = int.Parse(_cantileverRight);
-            //_beamData.CantileverLeft = int.Parse(_cantileverLeft);
-
-            //Nazwa = _calcTest.GiveTestName2(_beamData);
-
-
-        //}
-
-        //public string ValueTest2
-        //{
-        //    get
-        //    {
-        //        _beamData.SpanOne = int.Parse(_spanOne);
-        //        _beamData.CantileverRight = int.Parse(_cantileverRight);
-        //        _beamData.CantileverLeft = int.Parse(_cantileverLeft);
-
-        //        return _calcTest.GiveTestName2(_beamData);
-        //    }
-        //}
-
-
-        //test
-        public string ValueTest
+                private void AddError(string errorMessage, string propertyName)
         {
-            get 
+            if (!_propertyNameToErrorsDictionary.ContainsKey(propertyName))
             {
-                //return _calcTest.Calc(_beamData); 
-                //return _calcTest.Calc(CantileverLeft, CantileverRight);
-                //return _calcTest.GiveName(_selectedElement);
-                return _calcTest.GiveTestName();
+                _propertyNameToErrorsDictionary.Add(propertyName, new List<string>());
             }
+
+            _propertyNameToErrorsDictionary[propertyName].Add(errorMessage);
+
+            OnErrorsChanged(propertyName);
         }
 
+        private void ClearErrors(string propertyName)
+        {
+            _propertyNameToErrorsDictionary.Remove(propertyName);
+
+            OnErrorsChanged(propertyName);
+        }
+
+        private void OnErrorsChanged(string propertyName)
+        {
+            ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
+        }
+        
 
     }
 }

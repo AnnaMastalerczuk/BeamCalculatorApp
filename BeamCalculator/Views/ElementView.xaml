@@ -3,11 +3,40 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:BeamCalculator.Views"
+             xmlns:local="clr-namespace:BeamCalculator.Views" 
+             xmlns:validationrules="clr-namespace:BeamCalculator.ValidationRules"
              mc:Ignorable="d" FontSize="20" Background="white"
              d:DesignHeight="450" d:DesignWidth="800"
              x:Name="_window">
     <Grid>
+        <Grid.Resources>
+            <Style TargetType="TextBox">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="TextBox">
+                            <StackPanel>
+                                <Border Padding="{TemplateBinding Padding}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="3">
+                                    <ScrollViewer x:Name="PART_ContentHost"/>
+                                </Border>
+                                <ItemsControl FontSize="12" ItemsSource="{TemplateBinding Validation.Errors}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Foreground="red" Text="{Binding ErrorContent}"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>            
+        </Grid.Resources>
+
+     
+        
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20" />
             <ColumnDefinition Width="auto" />
@@ -46,10 +75,12 @@
         </ComboBox>
 
         <!--Beam dimensions-->
+
         <TextBlock Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" TextAlignment="Left" Margin="10" Text="Podaj wymiary belki [mm]:" />
         
         <TextBlock Grid.Row="4" Grid.Column="1" Margin="10" Text="Wspornik lewy" />
-        <TextBox x:Name ="CantileverLeft" Grid.Row="4" Grid.Column="2" Margin="10" />
+        <TextBox x:Name ="CantileverLeft" Grid.Row="4" Grid.Column="2" Margin="10" />    
+
 
         <TextBlock Grid.Row="5" Grid.Column="1" Margin="10" Text="Przęsło" />
         <TextBox x:Name ="SpanOne" Grid.Row="5" Grid.Column="2" Margin="10" />
@@ -61,9 +92,29 @@
         <TextBlock Grid.Row="1" Grid.Column="3" Margin="10" Text="Obciążenia punktowe:"/>
         <DataGrid Grid.Row="2" Grid.Column="3" Grid.RowSpan="5" Margin="10"
                   CanUserAddRows="True" AutoGenerateColumns="False"
-                  ItemsSource="{Binding Path=ListLoadPoint, Mode=TwoWay}">
+                  ItemsSource="{Binding Path=ListLoadPoint, ValidatesOnDataErrors=True,Mode=TwoWay}"
+                  AlternatingRowBackground="Gray">
+
+            <DataGrid.Resources>
+                <Style x:Key="errorStyle" TargetType="{x:Type TextBox}">
+                    <Setter Property="Padding" Value="-2"/>
+                    <Style.Triggers>
+                        <Trigger Property="Validation.HasError" Value="True">
+                            <Setter Property="Background" Value="Red"/>
+                            <Setter Property="ToolTip" 
+                Value="{Binding RelativeSource={RelativeSource Self},
+                  Path=(Validation.Errors)[0].ErrorContent}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.Resources>
+            
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Pozycja [mm]" Binding="{Binding Path=StartPosition, Mode=TwoWay}"/>
+                <DataGridTextColumn Header="Pozycja [mm]" 
+                    Binding="{Binding Path=StartPosition, 
+                    ValidatesOnDataErrors=True,Mode=TwoWay}"
+                    EditingElementStyle="{StaticResource errorStyle}"/>                                   
+
                 <DataGridTextColumn Header="Obciążenie punktowe [kN]" Binding="{Binding Path=LoadValue, Mode=TwoWay}"/>
                 <DataGridTemplateColumn>
                     <DataGridTemplateColumn.CellTemplate>
@@ -73,6 +124,27 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
+
+            <DataGrid.RowValidationRules>
+                <validationrules:LoadPointValidationRule BeamLength="10" ValidationStep="UpdatedValue"/>
+            </DataGrid.RowValidationRules>
+
+            <DataGrid.RowValidationErrorTemplate>
+                <ControlTemplate>
+                    <Grid Margin="0,-2,0,-2"
+                ToolTip="{Binding RelativeSource={RelativeSource
+                FindAncestor, AncestorType={x:Type DataGridRow}},
+                Path=(Validation.Errors)[0].ErrorContent}"> 
+                        <Ellipse StrokeThickness="0" Fill="Red" 
+              Width="{TemplateBinding FontSize}" 
+              Height="{TemplateBinding FontSize}" />
+                        <TextBlock Text="!" FontSize="{TemplateBinding FontSize}" 
+              FontWeight="Bold" Foreground="White" 
+              HorizontalAlignment="Center"  />
+                    </Grid>
+                </ControlTemplate>
+            </DataGrid.RowValidationErrorTemplate>
+            
         </DataGrid>
 
         <!--Beam distributed load-->
@@ -81,7 +153,7 @@
                   CanUserAddRows="True" AutoGenerateColumns="False"
                   ItemsSource="{Binding Path=ListLoadDistributed, Mode=TwoWay}">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Pozycja początkowa [mm]" Binding="{Binding Path=StartPosition, Mode=TwoWay}"/>
+                <DataGridTextColumn Header="Pozycja początkowa [mm]" Binding="{Binding Path=StartPosition,Mode=TwoWay}"/>
                 <DataGridTextColumn Header="Pozycja końcowa [mm]" Binding="{Binding Path=EndPosition, Mode=TwoWay}"/>
                 <DataGridTextColumn Header="Obciążenie równomiernie rozłożone [kN/m]" Binding="{Binding Path=LoadValue, Mode=TwoWay}"/>
                 <DataGridTemplateColumn>
@@ -101,7 +173,10 @@
         <ContentControl Grid.Row="8" Grid.ColumnSpan="3" Grid.Column="1" x:Name="ActiveItem" Margin="5"/>
         
         <!--tests-->
-        <TextBlock Grid.Row="7" Grid.Column="3" Margin="10" x:Name="ValueTest"/>
+        <TextBlock Grid.Row="7" Grid.Column="3" Margin="10" 
+                   AutomationProperties.AutomationId="MakeReservationSubmitErrorMessage"
+                   Foreground="Red"
+                   Text="{Binding SubmitErrorMessage}"/>
         <TextBlock Grid.Row="8" Grid.Column="3" Margin="10" Text="{Binding ListLoadPoint}"/>
         <ComboBox Grid.Row="8" Grid.Column="2" Margin="10" ItemsSource="{Binding ListLoadPoint}">
             <ComboBox.ItemTemplate>
