@@ -26,10 +26,7 @@ namespace BeamCalculator.ViewModels
     public class ElementViewModel : Conductor<IScreen>, INotifyDataErrorInfo, INotifyPropertyChanged
     {
 
-        private CalcTest _calcTest;
-
         //load lists
-
         private BindableCollection<LoadPoint> _listLoadPoint;
         public BindableCollection<LoadPoint> ListLoadPoint
         {
@@ -41,36 +38,9 @@ namespace BeamCalculator.ViewModels
             {
                 _listLoadPoint = value;
                 NotifyOfPropertyChange(() => ListLoadPoint);
-
-                if (ListLoadPoint[0].StartPosition > 10)
-                {
-                    AddError("Niepoprawny format. Podaj wymiary w mm", nameof(ListLoadPoint));
-                }
-
             }   
         }
-
-  
-
-        //private string _startPosition;
-
-        //public string StartPosition
-        //{
-        //    get { return _startPosition; }
-        //    set { 
-        //        _startPosition = value;
-        //        NotifyOfPropertyChange(() => StartPosition);
-
-        //        ClearErrors(nameof(StartPosition));
-        //        if (StartPosition.Contains('.') || StartPosition.Contains(',') || StartPosition.Any(Char.IsLetter))
-        //        {
-        //            AddError("Niepoprawny format. Podaj wymiary w mm", nameof(StartPosition));
-        //        }
-        //    }
-        //}
-
-
-
+          
         private BindableCollection<LoadDistributed> _listLoadDistributed;
         public BindableCollection<LoadDistributed> ListLoadDistributed
         {
@@ -117,7 +87,6 @@ namespace BeamCalculator.ViewModels
                 {
                     return _listOfElements.Where(x => x.Category == SelectedCategory.ToString()).ToList();
                 }
-                //return _listOfElements.Where(x => x.Category == SelectedCategory.ToString()).ToList();
                 return null;
             }
         }
@@ -215,7 +184,7 @@ namespace BeamCalculator.ViewModels
 
 
 
-        //load list command
+        //Load list command
 
         private DelegateCommand<LoadPoint> _deleteLoadPointCommand;
         public DelegateCommand<LoadPoint> DeleteLoadPointCommand =>
@@ -237,8 +206,6 @@ namespace BeamCalculator.ViewModels
 
         public ICommand GenerateChartsCommand { get; }
 
-
-
         public void GenerateChartsButton()
         {
             ActivateItemAsync(new ResultViewModel());
@@ -253,16 +220,13 @@ namespace BeamCalculator.ViewModels
 
             //_listOfElements = FileLoader.getElementsList();
 
-            _calcTest = new CalcTest();
             ListLoadPoint = new BindableCollection<LoadPoint>()
             {
-                {new LoadPoint(0,0) }
 
             };
 
             ListLoadDistributed = new BindableCollection<LoadDistributed>()
-            {
-                
+            {                
 
             };
 
@@ -286,7 +250,7 @@ namespace BeamCalculator.ViewModels
             return _propertyNameToErrorsDictionary.GetValueOrDefault(propertyName, new List<string>());
         }
 
-                private void AddError(string errorMessage, string propertyName)
+        private void AddError(string errorMessage, string propertyName)
         {
             if (!_propertyNameToErrorsDictionary.ContainsKey(propertyName))
             {

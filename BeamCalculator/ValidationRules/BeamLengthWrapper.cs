@@ -10,7 +10,7 @@ namespace BeamCalculator.ValidationRules
     public class BeamLengthWrapper : DependencyObject
     {
         public static readonly DependencyProperty BeamLengthProperty =
-     DependencyProperty.Register(
+         DependencyProperty.Register(
          nameof(BeamLength),
          typeof(int),
          typeof(BeamLengthWrapper),

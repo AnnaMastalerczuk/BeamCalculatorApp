@@ -163,7 +163,7 @@
         <TextBlock Grid.Row="1" Grid.Column="4" Margin="10" Text="Obciążenia równomiernie rozłożone:"/>
         <DataGrid Grid.Row="2" Grid.Column="4" Grid.RowSpan="5" Margin="10"
                   CanUserAddRows="True" AutoGenerateColumns="False"
-                  ItemsSource="{Binding Path=ListLoadDistributed,ValidatesOnDataErrors=True, Mode=TwoWay}"
+                  ItemsSource="{Binding Path=ListLoadDistributed,ValidatesOnDataErrors=True,Mode=TwoWay}"
                   AlternatingRowBackground="Gray">
             
             <DataGrid.Resources>
