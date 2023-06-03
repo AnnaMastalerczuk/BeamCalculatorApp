@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:BeamCalculator.Views" 
-             xmlns:validationrules="clr-namespace:BeamCalculator.ValidationRules"
+             xmlns:validationrules="clr-namespace:BeamCalculator.ValidationRules" 
              mc:Ignorable="d" FontSize="20" Background="white"
              d:DesignHeight="450" d:DesignWidth="800"
              x:Name="_window">
@@ -59,6 +59,8 @@
             <RowDefinition Height="20" />
         </Grid.RowDefinitions>
 
+
+
         <!--Combo category-->
         <TextBlock Grid.Row="1" Grid.Column="1" Margin="10" Text="Kategoria elementu" />
         <ComboBox Grid.Row="1" Grid.Column="2" Margin="10" MinWidth="200" ItemsSource="{Binding CategoryNames}" SelectedItem="{Binding SelectedCategory}"/>
@@ -107,6 +109,8 @@
                         </Trigger>
                     </Style.Triggers>
                 </Style>
+
+                <local:BindingProxy x:Key="proxy" Data="{Binding}"/>
             </DataGrid.Resources>
             
             <DataGrid.Columns>
@@ -115,7 +119,10 @@
                     ValidatesOnDataErrors=True,Mode=TwoWay}"
                     EditingElementStyle="{StaticResource errorStyle}"/>                                   
 
-                <DataGridTextColumn Header="Obciążenie punktowe [kN]" Binding="{Binding Path=LoadValue, Mode=TwoWay}"/>
+                <DataGridTextColumn Header="Obciążenie punktowe [kN]" 
+                    Binding="{Binding Path=LoadValue, 
+                    ValidatesOnDataErrors=True,Mode=TwoWay}"
+                    EditingElementStyle="{StaticResource errorStyle}"/>
                 <DataGridTemplateColumn>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -125,8 +132,13 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
 
+
             <DataGrid.RowValidationRules>
-                <validationrules:LoadPointValidationRule BeamLength="10" ValidationStep="UpdatedValue"/>
+                <validationrules:LoadPointValidationRule ValidationStep="UpdatedValue">
+                    <validationrules:LoadPointValidationRule.BeamLengthWrapper>
+                        <validationrules:BeamLengthWrapper BeamLength="{Binding Data.BeamLength,Source={StaticResource proxy}}" />
+                    </validationrules:LoadPointValidationRule.BeamLengthWrapper>
+                </validationrules:LoadPointValidationRule>
             </DataGrid.RowValidationRules>
 
             <DataGrid.RowValidationErrorTemplate>
@@ -151,11 +163,38 @@
         <TextBlock Grid.Row="1" Grid.Column="4" Margin="10" Text="Obciążenia równomiernie rozłożone:"/>
         <DataGrid Grid.Row="2" Grid.Column="4" Grid.RowSpan="5" Margin="10"
                   CanUserAddRows="True" AutoGenerateColumns="False"
-                  ItemsSource="{Binding Path=ListLoadDistributed, Mode=TwoWay}">
+                  ItemsSource="{Binding Path=ListLoadDistributed,ValidatesOnDataErrors=True, Mode=TwoWay}"
+                  AlternatingRowBackground="Gray">
+            
+            <DataGrid.Resources>
+                <Style x:Key="errorStyle" TargetType="{x:Type TextBox}">
+                    <Setter Property="Padding" Value="-2"/>
+                    <Style.Triggers>
+                        <Trigger Property="Validation.HasError" Value="True">
+                            <Setter Property="Background" Value="Red"/>
+                            <Setter Property="ToolTip" 
+                Value="{Binding RelativeSource={RelativeSource Self},
+                  Path=(Validation.Errors)[0].ErrorContent}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+
+                <local:BindingProxy x:Key="proxy" Data="{Binding}"/>
+            </DataGrid.Resources>
+            
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Pozycja początkowa [mm]" Binding="{Binding Path=StartPosition,Mode=TwoWay}"/>
-                <DataGridTextColumn Header="Pozycja końcowa [mm]" Binding="{Binding Path=EndPosition, Mode=TwoWay}"/>
-                <DataGridTextColumn Header="Obciążenie równomiernie rozłożone [kN/m]" Binding="{Binding Path=LoadValue, Mode=TwoWay}"/>
+                <DataGridTextColumn Header="Pozycja początkowa [mm]" 
+                                    Binding="{Binding Path=StartPosition,
+                                    ValidatesOnDataErrors=True,Mode=TwoWay}"
+                                    EditingElementStyle="{StaticResource errorStyle}"/>
+                <DataGridTextColumn Header="Pozycja końcowa [mm]" 
+                                    Binding="{Binding Path=EndPosition,
+                                    ValidatesOnDataErrors=True,Mode=TwoWay}"
+                                    EditingElementStyle="{StaticResource errorStyle}"/>
+                <DataGridTextColumn Header="Obciążenie równomiernie rozłożone [kN/m]" 
+                                    Binding="{Binding Path=LoadValue,
+                                    ValidatesOnDataErrors=True, Mode=TwoWay}"
+                                    EditingElementStyle="{StaticResource errorStyle}"/>
                 <DataGridTemplateColumn>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -164,6 +203,31 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
+
+            <DataGrid.RowValidationRules>
+                <validationrules:LoadDistributedValidationRule ValidationStep="UpdatedValue">
+                    <validationrules:LoadDistributedValidationRule.BeamLengthWrapper>
+                        <validationrules:BeamLengthWrapper BeamLength="{Binding Data.BeamLength,Source={StaticResource proxy}}" />
+                    </validationrules:LoadDistributedValidationRule.BeamLengthWrapper>
+                </validationrules:LoadDistributedValidationRule>
+            </DataGrid.RowValidationRules>
+
+            <DataGrid.RowValidationErrorTemplate>
+                <ControlTemplate>
+                    <Grid Margin="0,-2,0,-2"
+                ToolTip="{Binding RelativeSource={RelativeSource
+                FindAncestor, AncestorType={x:Type DataGridRow}},
+                Path=(Validation.Errors)[0].ErrorContent}">
+                        <Ellipse StrokeThickness="0" Fill="Red" 
+              Width="{TemplateBinding FontSize}" 
+              Height="{TemplateBinding FontSize}" />
+                        <TextBlock Text="!" FontSize="{TemplateBinding FontSize}" 
+              FontWeight="Bold" Foreground="White" 
+              HorizontalAlignment="Center"  />
+                    </Grid>
+                </ControlTemplate>
+            </DataGrid.RowValidationErrorTemplate>
+            
         </DataGrid>
 
         <!--Generate charts button-->

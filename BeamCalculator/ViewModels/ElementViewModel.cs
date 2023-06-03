@@ -198,21 +198,19 @@ namespace BeamCalculator.ViewModels
             }
         }
 
-        //private int _beamLength;
-
-        //public int BeamLength
-        //{
-        //    get { return int.Parse(CantileverRight) + int.Parse(CantileverRight) + int.Parse(SpanOne); }
-
-        //}
-
         private int _beamLength;
 
         public int BeamLength
         {
-            get { return _beamLength; }
-            set { _beamLength = value; }
+            get { return int.Parse(CantileverRight) + int.Parse(CantileverRight) + int.Parse(SpanOne); }
+
         }
+
+        //private int _beamLength;
+        //public int BeamLength
+        //{
+        //    get { return 100; }
+        //}
 
 
 
