@@ -13,13 +13,13 @@ namespace BeamCalculator.Models
         public double MaxM { get; set; }
         public double MaxT { get; set; }
 
-        public Element(string Name, string Category, double MaxM, double MaxT) 
-        {
-            this.Name = Name;
-            this.Category = Category;
-            this.MaxM = MaxM;
-            this.MaxT = MaxT;            
-        }
+        //public Element(string Name, string Category, double MaxM, double MaxT) 
+        //{
+        //    this.Name = Name;
+        //    this.Category = Category;
+        //    this.MaxM = MaxM;
+        //    this.MaxT = MaxT;            
+        //}
 
     }
 }

@@ -58,7 +58,8 @@ namespace BeamCalculator.ViewModels
 
 
         //Category
-        private List<Element> _listOfElements;
+        //private List<Element> _listOfElements;
+        private BindableCollection<Element> _listOfElements { get; set; }
         public List<string> CategoryNames
         {
             get
@@ -175,15 +176,6 @@ namespace BeamCalculator.ViewModels
 
         }
 
-        //private int _beamLength;
-        //public int BeamLength
-        //{
-        //    get { return 100; }
-        //}
-
-
-
-
         //Load list command
 
         private DelegateCommand<LoadPoint> _deleteLoadPointCommand;
@@ -230,13 +222,17 @@ namespace BeamCalculator.ViewModels
 
             };
 
-            _listOfElements = new List<Element>()
-            {
-                {new Element("belka", "belka drewniana", 5,10) },
-                {new Element("belka lezaca", "belka drewniana", 1,7) },
-                {new Element("rygiel ws", "rygiel stalowy", 25,100) },
-                {new Element("rygiel mk", "rygiel stalowy", 35,150) }
-            };
+            //_listOfElements = new List<Element>()
+            //{
+            //    {new Element("belka", "belka drewniana", 5,10) },
+            //    {new Element("belka lezaca", "belka drewniana", 1,7) },
+            //    {new Element("rygiel ws", "rygiel stalowy", 25,100) },
+            //    {new Element("rygiel mk", "rygiel stalowy", 35,150) }
+            //};
+
+            FileLoader fileLoader = new FileLoader();
+            
+            _listOfElements = new BindableCollection<Element>(fileLoader.getElementsList());
 
             _propertyNameToErrorsDictionary = new Dictionary<string, List<string>>();
         }
